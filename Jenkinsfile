@@ -10,7 +10,7 @@ pipeline {
 
         stage('Run k6 Load Test') {
             steps {
-                sh 'k6 run script.js'
+                sh 'k6 run sample.test'
             }
         }
     }
