@@ -10,7 +10,7 @@ pipeline {
 
         stage('Run k6 Load Test') {
             steps {
-                sh 'k6 run sample.test.js'
+                sh "k6 run --vus $VUS --duration 30s sample.test.js"
             }
         }
     }
