@@ -1,0 +1,18 @@
+{
+  "name": "k6-modular-framework",
+  "version": "1.0.0",
+  "description": "A modular K6 load testing framework using TypeScript.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "k6 run dist/index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "k6": "^0.49.0"
+  }
+}
