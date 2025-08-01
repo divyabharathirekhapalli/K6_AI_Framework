@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Run k6 Test') {
             steps {
-                sh 'k6 run script.js'  // change script.js to your actual file name
+                sh 'k6 run sample.test.js'  // change script.js to your actual file name
             }
         }
     }
