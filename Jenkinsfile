@@ -1,14 +1,16 @@
 pipeline {
     agent any
+
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
         }
-        stage('Run k6 Test') {
+
+        stage('Run k6 Load Test') {
             steps {
-                sh 'k6 run sample.test.js'  // change script.js to your actual file name
+                sh 'k6 run script.js'
             }
         }
     }
