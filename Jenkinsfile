@@ -10,12 +10,17 @@ pipeline {
         SLACK_CHANNEL = '#social'
     }
 
-    stages {
-        stage('Checkout Code') {
-            steps {
-                git 'https://github.com/divyabharathirekhapalli/K6_AI/'
-            }
-        }
+    stage('Checkout Code') {
+    steps {
+        checkout([$class: 'GitSCM',
+          branches: [[name: '*/main']],
+          userRemoteConfigs: [[
+              url: 'https://github.com/divyabharathirekhapalli/K6_AI.git',
+              credentialsId: 'github-https-token'
+          ]]
+        ])
+    }
+}
 
         stage('Run k6 Load Test') {
             steps {
