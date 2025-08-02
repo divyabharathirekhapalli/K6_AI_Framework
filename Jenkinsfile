@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/divyabharathirekhapalli/K6_AI_Framework/'
+                git 'https://github.com/divyabharathirekhapalli/K6_AI/'
             }
         }
 
