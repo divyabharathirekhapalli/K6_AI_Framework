@@ -6,21 +6,23 @@ pipeline {
     }
 
     environment {
-        SLACK_BOT_TOKEN = credentials('slack-bot-token') // Use Jenkins credentials store
+        SLACK_BOT_TOKEN = credentials('slack-bot-token')       // Jenkins credential (Secret Text or Username/Password)
         SLACK_CHANNEL = '#social'
     }
 
-    stage('Checkout Code') {
-    steps {
-        checkout([$class: 'GitSCM',
-          branches: [[name: '*/main']],
-          userRemoteConfigs: [[
-              url: 'https://github.com/divyabharathirekhapalli/K6_AI.git',
-              credentialsId: 'github-https-token'
-          ]]
-        ])
-    }
-}
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/divyabharathirekhapalli/K6_AI.git',
+                        credentialsId: 'github-https-token'    // <-- Jenkins credential ID
+                    ]]
+                ])
+            }
+        }
 
         stage('Run k6 Load Test') {
             steps {
@@ -30,12 +32,12 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    // Extract a summary line from k6 output (adjust this to fit your script)
-                    def summary = result.split('\n').find { it.contains('http_reqs') || it.contains('iterations') }
+                    // Extract a meaningful line from result
+                    def summaryLine = result.split('\n').find { it.contains('http_reqs') || it.contains('iterations') }
 
-                    def message = ":white_check_mark: Load test completed with *${params.USERS}* users.\n```${summary}```"
+                    def message = ":white_check_mark: Load test completed with *${params.USERS}* users.\n```${summaryLine ?: 'No summary found'}```"
 
-                    // Send to Slack using Bot token
+                    // Send Slack message
                     sh """
                         curl -X POST https://slack.com/api/chat.postMessage \
                         -H "Authorization: Bearer ${SLACK_BOT_TOKEN}" \
