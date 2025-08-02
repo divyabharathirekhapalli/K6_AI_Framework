@@ -16,7 +16,7 @@ pipeline {
             $class: 'GitSCM',
             branches: [[name: '*/main']],
             userRemoteConfigs: [[
-                url: 'https://github.com/divyabharathirekhapalli/K6_AI.git',
+                url: 'https://github.com/divyabharathirekhapalli/K6_AI_Framework.git',
                 credentialsId: 'github-https-token'
             ]]
         ])
