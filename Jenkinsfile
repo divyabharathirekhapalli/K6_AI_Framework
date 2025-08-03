@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SLACK_WEBHOOK_URL = credentials('slack-webhook-url') as String
+        SLACK_WEBHOOK_URL = credentials('slack-webhook-url') // DO NOT add `as String` here
     }
 
     stages {
@@ -21,6 +21,8 @@ pipeline {
         stage('Send Results to Slack') {
             steps {
                 script {
+                    def webhook = SLACK_WEBHOOK_URL as String  // do casting here safely
+
                     def result = readFile('result.txt')
                         .take(2800)
                         .replace('\\', '\\\\')
@@ -37,7 +39,7 @@ pipeline {
 
                     httpRequest(
                         httpMode: 'POST',
-                        url: SLACK_WEBHOOK_URL,
+                        url: webhook,
                         contentType: 'APPLICATION_JSON',
                         requestBody: payload
                     )
