@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SLACK_WEBHOOK_URL = credentials('https://hooks.slack.com/services/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') // Slack webhook from Jenkins credentials
+        SLACK_WEBHOOK_URL = credentials('slack-webhook-url')
     }
 
     stages {
@@ -21,18 +21,17 @@ pipeline {
         stage('Send Results to Slack') {
             steps {
                 script {
-                    // Read the result file and format it for Slack
                     def result = readFile('result.txt')
-                        .take(2500)                              // Trim to avoid exceeding Slack limit
-                        .replaceAll('`', "'")                    // Replace backticks with apostrophes
-                        .replaceAll("\\\\", "\\\\\\\\")          // Escape backslashes
-                        .replaceAll("\"", "\\\\\"")              // Escape double quotes
-                        .replaceAll("\r", "")                    // Remove carriage returns
-                        .replaceAll("\n", "\\n")                 // Escape newlines
+                        .take(2800) // Trim to avoid Slack's max message limit
+                        .replace('\\', '\\\\')      // Escape backslashes
+                        .replace('"', '\\"')        // Escape double quotes
+                        .replace('`', "'")          // Avoid Slack markdown issue
+                        .replace('\r', '')          // Remove carriage returns
+                        .replace('\n', '\\n')       // Escape newlines
 
                     def payload = """
                     {
-                      "text": "*✅ Load Test Completed with k6*\n\\n*Results:*\n```$result```"
+                      "text": "*✅ k6 Load Test Completed*\n```$result```"
                     }
                     """
 
