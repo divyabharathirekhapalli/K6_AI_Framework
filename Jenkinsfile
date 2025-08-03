@@ -1,8 +1,12 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'USERS', defaultValue: '1', description: 'Number of virtual users for load testing')
+    }
+
     environment {
-        SLACK_WEBHOOK_URL = credentials('slack-webhook-url') // DO NOT add `as String` here
+        SLACK_WEBHOOK_URL = credentials('slack-webhook-url') // This is a credentials ID in Jenkins
     }
 
     stages {
@@ -14,15 +18,13 @@ pipeline {
 
         stage('Run k6 Load Test') {
             steps {
-                sh 'k6 run sample.test.js > result.txt'
+                sh "k6 run sample.test.js --vus ${params.USERS} > result.txt"
             }
         }
 
         stage('Send Results to Slack') {
             steps {
                 script {
-                    def webhook = SLACK_WEBHOOK_URL as String  // do casting here safely
-
                     def result = readFile('result.txt')
                         .take(2800)
                         .replace('\\', '\\\\')
@@ -39,7 +41,7 @@ pipeline {
 
                     httpRequest(
                         httpMode: 'POST',
-                        url: webhook,
+                        url: SLACK_WEBHOOK_URL,
                         contentType: 'APPLICATION_JSON',
                         requestBody: payload
                     )
